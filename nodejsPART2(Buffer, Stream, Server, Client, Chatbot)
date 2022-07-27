@@ -1,0 +1,434 @@
+<=============================  app.js   ==============================>
+const readline=require("readline")
+const bot=require("./bot")
+var r1=readline.createInterface(process.stdin,process.stdout)
+r1.setPrompt("You=>");
+r1.prompt()
+
+r1.on('line',(msg)=>{
+    console.log("Bot==> "+ bot.reply(msg))
+    r1.prompt();
+}).on('close',()=>{
+    process.exit();
+})
+
+
+<=============================  buffer.js   ====================================>
+var qa=[
+    {
+        q:"qu1",
+        a:"ans"
+    },
+    {
+        q:"qu1",
+        a:"ans"
+    }
+];
+
+module.exports.reply=function (message)
+{
+    this.Bot_Age = 25;
+    this.Bot_Name = "name1";
+    this.Bot_University = "VNSGU";
+    this.Bot_Country = "India";
+    
+    message= message.toLowerCase()
+
+    if(message.indexOf("hi") > -1 || 
+        message.indexOf("hello") > -1 || 
+        message.indexOf("welcome") > -1 )
+    {
+        return "Hi!";
+    } 
+    else if(message.indexOf("age") > -1 && 
+        message.indexOf("your"))
+    {
+        return "I'm " + this.Bot_Age;
+    }
+    else if (message.indexOf("how") > -1 && 
+        message.indexOf("are") && 
+        message.indexOf("you"))
+    {
+        return "I'm fine ^_^"
+    }
+    else if(message.indexOf("where") > -1 
+        && message.indexOf("live") && 
+        message.indexOf("you"))
+    {
+        return "I live in " + this.Bot_Country;
+    }
+    return "Sorry, I didn't get it :( ";
+ 
+}
+
+
+<=========================    file_server.js     =================================>
+
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+
+http.createServer(function (req, res) {
+  var q = url.parse(req.url, true);
+  console.log(req.url);
+  var filename = "./files/" + q.pathname;
+   console.log("Request for " + q.pathname + " received.");
+   if(req.url=="/")
+    {
+        res.write("Specify path");
+        res.end();
+    }
+    else
+    {
+      fs.readFile(filename, function(err, data) {
+          if (err) {
+            res.writeHead(404, {'Content-Type': 'text/html'});
+            return res.end("404 Not Found");
+          } 
+          
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.write(data);
+          return res.end();
+      });
+    }
+}).listen(8000); 
+console.log("Listening on port no 8000");
+
+
+<===========================    moment.js  =============================>
+var moment=require("moment");
+console.log(moment().format("D-M-yyyy"));
+
+
+<==========================   server.js     ===========================>
+var http=require("http");
+
+var server=http.createServer(function(req,res){
+	console.log("Req received = > "+req.url);
+   if(req.url=="/")
+   {
+      res.write("Hello")
+      res.end()   
+   }
+   else if(req.url=="/list")
+   {
+      res.write("<html><body><h1>List</h1></body></html>")
+      res.end()   
+   }
+   else
+   {
+      res.write("Other Pages")
+      res.end()   
+
+   }
+});
+server.listen(8080);
+console.log("Listening on port no 8080");
+
+
+
+<==========================================    server-get.js     =============================================>
+
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+
+const server = http.createServer((req, res) => {
+    var u1 = url.parse(req.url,true); //parseQueryString <boolean> If true, the query property will always be set to an object returned by the querystring module's parse() method. If false, the query property on the returned URL object will be an unparsed, undecoded string. Default: false.
+    if (u1.pathname=="/process" && req.method === 'GET') 
+    {
+        res.write(u1.query.fname+" "+u1.query.age) 
+        res.end();        
+    }
+    else if (req.url=="/index.html" && req.method === 'GET')
+    {
+            var filename = "./files/index.html";
+            fs.readFile(filename, function(err, data) {
+            if (err) {
+              res.writeHead(404, {'Content-Type': 'text/html'});
+              return res.end("404 Page Not Found");
+            } 
+            
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(data);
+            return res.end();
+            });    
+    }
+    else 
+    {
+        res.write("/ is not allowed to access!!!");
+        return res.end();
+    }
+});
+server.listen(9090);
+
+console.log("Server listeniing on port number 9090");
+
+
+<==============     server-pages.js   ===============>
+
+
+var http = require('http'); 
+
+var server = http.createServer(function (req, res) {   
+    if (req.url == '/') { //check the URL of the current request
+        
+        // set response header
+        res.writeHead(200, { 'Content-Type': 'text/html' }); 
+        
+        // set response content    
+        res.write('<html><body><p>This is home Page.</p></body></html>');
+        res.end();
+    
+    }
+    else if (req.url == "/student") {
+        
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.write('<html><body><p>This is student Page.</p></body></html>');
+        res.end();
+    
+    }
+    else if (req.url == "/admin") {
+        
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.write('<html><body><p>This is admin Page.</p></body></html>');
+        res.end();
+    
+    }
+    else
+        res.end('Invalid Request!');
+
+});
+
+server.listen(8000); //6 - listen for any incoming requests
+
+console.log('Node.js web server at port 8000 is running..')
+
+
+
+<=================       server-post.js     ===================>
+const http = require('http');
+const fs = require('fs');
+
+const server = http.createServer((req, res) => {
+    if (req.url=="/process" && req.method === 'POST') 
+    {
+        let body = '';
+        //req.on("data",chunk=>{} )
+        req.on('data', chunk => {
+            body += chunk.toString(); // convert Buffer to string
+        });
+        req.on('end', () => {
+            console.log(body);
+            res.end('ok  => '+ body);
+            //fname=vibha&age=25
+        }); 
+    }
+    else if (req.url=="/index.html" && req.method === 'GET')
+    {
+            var filename = "./files/index.html";
+            fs.readFile(filename, function(err, data) {
+            if (err) {
+              res.writeHead(404, {'Content-Type': 'text/html'});
+              return res.end("404 Not Found");
+            } 
+            
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.write(data);
+            return res.end();
+            });    
+    }
+    else 
+    {
+        res.write("/ is not allowed to access!!!");
+        return res.end();
+    }
+});
+server.listen(9090);
+
+console.log("Server listeniing on port number 9090");
+
+
+
+<==========================      server-static.js    =========================>
+
+const http = require('http');
+const url = require('url');
+const static = require('node-static');
+const fileServer = new static.Server('./files');
+var server = http.createServer(function(request, response) {
+	//request.addListener('end',function(){}).resume();
+    request.addListener('end', function () {
+    if(request.url=="/")
+    {
+        response.write("Specify path");
+        response.end();
+    }
+    else
+    {    
+    	fileServer.serve(request, response);
+    }    
+    }).resume();
+    
+}).listen(8000);
+console.log("Listening on port number 8000");
+
+
+
+<=================================      url1.js   ============================>
+var url = require('url');
+var adr = 'http://www.nodejs.org/default.htm?year=2021&month=february';
+var q = url.parse(adr,false); //parseQueryString <boolean> If true, the query property will always be set to an object returned by the querystring module's parse() method. If false, the query property on the returned URL object will be an unparsed, undecoded string. Default: false.
+
+console.log(q.host); //returns www.nodejs.org
+console.log(q.pathname); //returns '/default.htm'
+console.log(q.search); //returns '?year=2021&month=february' Gets and sets the serialized query portion of the URL.
+
+var qdata = q.query; //returns an object: { year: 2021, month: 'february' }
+console.log(qdata.month); //returns 'february'
+
+
+<===================================    webclient.js    ========================>
+
+
+var http = require('http');
+
+// Options to be used by request 
+//http://localhost:8080/index.html
+var options = {
+   host: 'localhost',
+   port: '8080',
+   path: '/index.html'};
+
+// Callback function is used to deal with response
+var callback = function(response) {
+   // Continuously update stream with data
+   var body = '';
+   response.on('data', function(data) {
+      body += data;
+   });
+   
+   response.on('end', function() {
+      // Data received completely.
+      console.log(body);
+   });
+}
+// Make a request to the server
+var req = http.request(options, callback);
+req.end();
+
+
+
+<=============================      index.html   ===========================>
+<!doctype html>
+ <html>
+ <body>
+    <h1> Get Form</h1>
+    <form action="/process" method="get">
+        Enter Name: <input type="text" name="fname" /><br />
+        Enter Age: <input type="number" name="age" /><br />            
+        <button>Save</button>
+    </form>
+    <br><br>
+    <h1> Post Form</h1>
+     <form action="/process" method="post">
+         Enter Name: <input type="text" name="fname" /><br />
+         Enter Age: <input type="number" name="age" /><br />            
+         <button>Save</button>
+     </form>
+ </body>
+ </html>  
+ 
+ <==================================    buffer.js   =================================>
+ var buf = Buffer.alloc(26);
+for (var i = 0 ; i < 26 ; i++) {
+  buf[i] = i + 97;
+}
+console.log( buf.toString('ascii'));       // outputs: abcdefghijklmnopqrstuvwxyz
+console.log( buf.toString('ascii',0,3));   // outputs: abcde
+console.log( buf.toString('utf8',0,5));    // outputs: abcde
+console.log( buf.toString(undefined,0,5)); // encoding defaults to 'utf8', outputs abcde
+
+
+
+<===================================    chain_decompress.js    =================================>
+var fs = require("fs");
+var zlib = require('zlib');
+
+fs.createReadStream('../files/file3.txt.gz')
+   .pipe(zlib.createGunzip())
+   .pipe(fs.createWriteStream('../files/file4.txt','utf-8'));
+  
+console.log("File Decompressed.");
+
+
+
+<==============================      chaining.js       ====================================>
+var fs = require("fs");
+var zlib = require('zlib');
+
+// Compress the file input.txt to input.txt.gz
+fs.createReadStream('../files/file1.txt')
+   .pipe(zlib.createGzip())
+   .pipe(fs.createWriteStream('../files/file3.txt.gz'));
+  
+console.log("File Compressed.");
+
+
+
+
+<==============================       piping.js    ==================>
+
+/*
+Piping is a mechanism where we provide the output of one stream as 
+the input to another stream. It is normally used to get data from 
+one stream and to pass the output of that stream to another stream. 
+There is no limit on piping operations.
+*/
+
+var fs = require("fs");
+
+// Create a readable stream
+var readerStream = fs.createReadStream('../files/file1.txt');
+
+// Create a writable stream
+var writerStream = fs.createWriteStream('../files/file2.txt');
+
+// Pipe the read and write operations
+// read file1.txt and write data to file2.txt
+readerStream.pipe(writerStream);
+
+console.log("Program Ended");
+
+
+
+
+< =====================       read_stream.js     =======================>
+
+
+var fs = require("fs");
+var data = '';
+
+// Create a readable stream
+var readerStream = fs.createReadStream('../files/file10.txt');
+
+// Set the encoding to be utf8. 
+//readerStream.setEncoding('UTF8');
+
+// Handle stream events --> data, end, and error
+readerStream.on('data', function(chunk) {
+   
+   //console.log(chunk); //gives data in buffer object. do not set encoding type
+   data += chunk;
+});
+
+readerStream.on('end',function() {
+   console.log(data);
+});
+
+readerStream.on('error', function(err) {
+   console.log(err.stack);
+});
+
+
+
