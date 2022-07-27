@@ -1,0 +1,308 @@
+<==========================     class.js     ====================================>
+
+{}
+var person = {
+  firstName: "Fname",
+  lastName : "Lname",
+  id       : 5,
+  fullName : function() {
+    return this.firstName + " " + this.lastName;
+  }
+};
+var p1=Object.create(person);
+console.log(p1.fullName());
+
+var emp={
+  id:102,
+  name:"Shyam Kumar",
+  salary:40000
+}  
+console.log(emp.id+" "+emp.name+" "+emp.salary);  
+
+
+var emp1=new Object();  
+emp1.id=101;  
+emp1.name="Rani Kumar";  
+emp1.salary=50000;  
+console.log("<br><br>"+emp1.id+" "+emp1.name+" "+emp1.salary); 
+
+function emp2(id,name,salary){  
+this.id=id;  
+this.name=name;  
+this.salary=salary;  
+}  
+e=new emp2(103,"Vimal Jaiswal",30000);  
+  
+console.log("<br><br>"+e.id+" "+e.name+" "+e.salary);  
+
+
+class Bike  
+{  
+  constructor(company)  
+  {  
+    this.company=company;  
+  }  
+}  
+class Vehicle extends Bike {  
+  constructor(company,name,price) {  
+   super(company);  
+    this.name=name;  
+    this.price=price;  
+  }   
+}  
+var v = new Vehicle("Suzuki","Yamaha",70000);  
+console.log(v.company+" "+v.name+" "+v.price);  
+
+
+
+<==========================    console.js    ====================================>
+
+
+console.log(__filename);
+console.log(__dirname);
+function printHello() {
+   console.log( "Hello!");
+}  
+var t = setTimeout(printHello, 2000);
+//clearTimeout(t);
+
+console.time("label1");
+const name1 = 'abc';  
+var a={name:"abc",salary:2000};
+console.warn(`Warning ${name1}! `);   
+//process.exit();
+console.timeEnd('label1');
+
+console.info("Program Output");
+// Printing to console
+process.stdout.write("Hello World!" + "\n");
+// Reading passed parameter : Command line arguments
+
+
+// process.argv.forEach(function(v,i){});
+process.argv.forEach(function(val, index) {
+   console.log(index + ': ' + val);
+});
+
+console.log(process.execPath); // Getting executable path
+console.log(process.platform); // Platform Information
+
+ console.log(process.env);
+//console.error(new Error('Error msg.'));
+
+
+<==========================    event.js     =====================================>
+
+
+const events=require("events");
+const myEmitter=new events.EventEmitter();
+
+//myEmitter.on("eventname",(event,listener)=>{})
+myEmitter.on('newListener', (event, listener) => {
+  console.log('Listener added');
+  if (event === 'event1') {
+      console.log('Listener added for event1');
+  }
+});
+myEmitter.on('event1', () => {
+    console.log('Event1 L1!');
+  });
+
+myEmitter.on('event1', () => {
+  console.log('Event1 L2!');
+});
+myEmitter.on('event2', () => {
+  console.log('event2');
+});
+myEmitter.emit('event1');
+myEmitter.emit('event2');
+
+
+
+<==================================    event11.js    ================================>
+
+var events = require("events");
+var eventsEmitter = new events.EventEmitter();
+
+eventsEmitter.on("event1",event1Hadler); //assign 
+
+function event1Hadler(){
+    console.log("event1");
+}
+eventsEmitter.emit("event1");
+
+
+
+<==================================    event12.js    ==================================>
+
+
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
+
+// listener #1
+var listner1 = function listner1() {
+   console.log('listner1 executed.');
+}
+
+// listener #2
+var listner2 = function listner2() {
+   console.log('listner2 executed.');
+}
+
+// Bind the connection event with the listner1 function
+eventEmitter.addListener('connection', listner1);
+
+// Bind the connection event with the listner2 function
+eventEmitter.on('connection', listner2);
+
+//call class method
+
+var eventListeners = eventEmitter.listenerCount('connection');
+console.log(eventListeners + " Listner(s) listening to connection event");
+
+// Fire the connection event 
+eventEmitter.emit('connection');
+
+// Remove the binding of listner1 function
+eventEmitter.removeListener('connection', listner1);
+console.log("Listner1 will not listen now.");
+
+// Fire the connection event 
+eventEmitter.emit('connection');
+
+eventListeners = eventEmitter.listenerCount('connection');
+console.log(eventListeners + " Listner(s) listening to connection event");
+
+console.log("Program Ended.");
+
+
+
+
+<===========================     event13.js   ======================================>
+
+var events = require("events");
+var fs = require('fs');
+var eventsEmitter = new events.EventEmitter();
+
+eventsEmitter.on('read',readFileContent);
+eventsEmitter.on('display',displayFileContent);
+eventsEmitter.on('finished',finished);
+
+eventsEmitter.emit('read','./files/file2.txt');
+
+function readFileContent(fileName){
+    console.log("Reading " + fileName + " file started:");
+    
+    fs.readFile(fileName, 'utf8', function 	(err,data) {
+    	// console.log("Reading " + fileName + 
+    	// 	" file done successfully.");
+    	eventsEmitter.emit('display',data);
+	});
+}
+
+function  displayFileContent(data){
+    console.log("File Data:");
+    console.log(data);
+    eventsEmitter.emit('finished');
+}
+
+function finished(){
+  console.log("Reading and Printing File content job is done successfully.");
+}
+
+
+<===============================  file1.js   ============================>
+var fs = require('fs');
+
+// var data = fs.readFileSync( "./files/file1.txt","utf-8" );
+// console.log( data );
+
+fs.readFile( "./files/file1.txt","utf-8", function( err, data ) {
+    console.log(data);
+    });
+
+console.log( "File reading complete!!" );
+
+
+
+<===========================    files.js    ==============================>
+//create file.txt, rename f2.txt to f1.txt
+var fs = require('fs');
+
+fs.writeFile('./files/file1.txt', 'Hello content!', function (err) {
+  if (err) throw err;
+  console.log('Write file!');
+}); 
+
+fs.appendFile('./files/file2.txt', ' This is my text.', function (err) {
+  if (err) throw err;
+  console.log('Appended!!');
+}); 
+
+fs.readFile('./files/file3.txt', 'utf-8',   function (err,data) {
+  if (err) throw err;
+  console.log("File read="+data);
+});
+
+fs.rename('./files/f1.txt', './files/f2.txt', function (err) {
+  if (err) throw err;
+  console.log('File Renamed!');
+});
+
+fs.unlink('./files/file.txt', function (err) {
+  if (err) throw err;
+  console.log('File deleted!');
+});
+
+
+<============================   js-class.html    ==========================>
+<html>
+<script>
+    function Person(name,age)
+    {
+        this.name=name;
+        this.age=age;
+    }
+    Person.prototype.f1=function(){
+    alert("Hello");
+    }
+    var o1=new Person("abc",25);
+    o1.f1();
+
+    console.log("Hello");
+</script>
+<body>
+Hello
+</body>
+</html>
+
+
+<=============================   server.js   =======================================>
+var http=require("http");
+
+var server=http.createServer(function(req,res){
+	console.log("Req received = > "+req.url);
+	res.writeHead(200, {'Content-Type': 'text/plain'});
+   res.write('Nodejs is awesome!! ');
+   res.end();
+});
+server.listen(8080);
+console.log("Listening on port no 8080");
+
+
+<============================   url1.js  ===================================>
+
+var url = require('url');
+var adr = 'http://www.nodejs.org/default.htm?year=2021&month=february';
+var q = url.parse(adr,true); //parseQueryString <boolean> If true, the query property will always be set to an object returned by the querystring module's parse() method. If false, the query property on the returned URL object will be an unparsed, undecoded string. Default: false.
+
+console.log(q.host); //returns www.nodejs.org
+console.log(q.pathname); //returns '/default.htm'
+console.log(q.search); //returns '?year=2021&month=february' Gets and sets the serialized query portion of the URL.
+
+var qdata = q.query; //returns an object: { year: 2021, month: 'february' }
+console.log(qdata.month); //returns 'february'
+
+
+
+
