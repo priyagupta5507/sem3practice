@@ -1,0 +1,275 @@
+<==================     index.html    ==============================>
+<!DOCTYPE html >
+<html>        
+    <body>
+<script language="javascript">
+    /*
+There are four main Web Socket API events −
+- Open
+- Message
+- Close
+- Error
+
+Each of the events are handled by implementing the functions like onopen, onmessage, onclose and onerror functions respectively. It can also be implemented with the help of addEventListener method.
+
+Actions
+-send() //to send  messages, which includes text files,   binary data or images.
+- close() //terminates connection
+*/
+
+var ws = new WebSocket('ws://localhost:8080');
+
+ws.addEventListener("message", function(msg1) {	    
+  var msg = msg1.data;
+  document.getElementById('chatlog').innerHTML+='<br>Server: '+ msg;
+});
+
+function sendMessage(){
+    var message = document.getElementById('message').value;
+    document.getElementById('chatlog').innerHTML+='<br> Me: '+ message;
+    ws.send(message);
+    
+}
+
+
+</script>
+<h2>Data from server</h2>
+        <div id="chatlog"></div>
+<hr/>
+<h2>Data from client</h2>            
+    <input type="text" id="message"  />
+        <input type="button" id="b1" onclick="sendMessage()" value="send" />
+
+    </body>
+</html>
+
+
+
+<======================   ws-httpserver.js    ========================>
+
+
+const WebSocket = require('ws') // npm i ws --save
+var http = require('http');
+var fs = require('fs');
+
+var httpserver = http.createServer(function(request, response) 
+{
+  if(request.url=="/")
+  {
+    fs.readFile("./public/index.html",(err,data)=>{
+        response.write(data)
+        response.end();
+    })
+  }
+}).listen(8080, function() {
+    console.log((new Date()) + 
+      ' Server is listening on port 8080');
+});
+const wss=new WebSocket.Server({server:httpserver})
+wss.on("connection",(clientws)=>{
+  clientws.send("Hello Client")
+  clientws.on("message",(msg)=>{
+    console.log("Received "+msg)
+    clientws.send("Received "+ msg)
+  })
+})
+// var wss=new WebSocket.Server({server: httpserver})
+// wss.on("connection",(clientws)=>{
+//   clientws.send("Hello Client");
+//   clientws.on("message",(msg)=>{
+//     console.log("Received "+msg)
+//     clientws.send("Received "+msg)
+//   })
+// })
+// var wss=new WebSocket.Server({server: httpserver})
+// wss.on("connection",(ws)=>{
+//     ws.send("Hello Client!!")
+//     ws.on("message",(msg)=>{
+//         console.log("Received msg => "+msg)
+//         ws.send("Received msg => "+ msg)
+//     })
+// })
+
+//index.html(our client)->httpserver (our server)->cric
+
+
+
+<================================      async.js     =============================>
+
+
+function square(x) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(Math.pow(x, 2));
+    }, 2000);
+  });
+}
+
+async function async_square(x)
+{
+  const value = await square(x);
+  console.log(value);
+}
+
+async_square(10);
+
+async function addAsync(x) {
+    const a = await square(10);
+    const b = await square(20);
+    const c = await square(30);
+    return x + a + b + c;
+  }
+  
+  addAsync(10).then((sum) => {
+    console.log(sum);
+  });
+  
+  
+  
+  <=============================  async1.js     =============================>
+  
+  
+  const fetch = require('node-fetch');
+
+async function asyncajaxawait()
+{
+  const res = await fetch('https://www.google.com/')
+  console.log(res);
+}
+
+asyncajaxawait();
+
+
+
+<====================================     events13.js          ===================================>
+var events = require("events");
+var fs = require('fs');
+var eventsEmitter = new events.EventEmitter();
+
+eventsEmitter.on('read',readFileContent);
+eventsEmitter.on('display',displayFileContent);
+eventsEmitter.on('finished',finished);
+
+eventsEmitter.emit('read','./files/file2.txt');
+
+function readFileContent(fileName){
+    console.log("Reading " + fileName + " file started:");
+    
+    fs.readFile(fileName, 'utf8', function 	(err,data) {
+    	// console.log("Reading " + fileName + 
+    	// 	" file done successfully.");
+    	eventsEmitter.emit('display',data);
+	});
+}
+
+function  displayFileContent(data){
+    console.log("File Data:");
+    console.log(data);
+    eventsEmitter.emit('finished');
+}
+
+function finished(){
+  console.log("Reading and Printing File content job is done successfully.");
+}
+
+
+<==========================   file-promise.js   ==============================>
+ var Promise = require('bluebird'); // npm i
+ //bluebird or q
+ var fs = Promise.promisifyAll(require('fs'));
+
+var readFile = Promise.promisify(require("fs").readFile);
+
+//fs.readFile("fpath","enc").then(function(){}).then().catch()
+readFile("./files/file2.txt", "utf8")
+.then(function(contents) {    
+    return contents;
+})
+.then(function(result) {
+    console.log("The content of file => ", result);
+})
+.catch(function(e) {
+    console.log("Error reading file", e);
+});
+
+
+<============================   promise.js   ===================================>
+var fs = require('fs');
+//var fs = require('fs/promises');
+//var fs = require('fs').promises;
+
+function readFile(fpath) //promisify fs.readFile
+{
+  return new Promise(function(success,fail){
+    fs.readFile(fpath,"utf-8",function(err,data){
+      if(err)
+        fail(err)
+      else
+        success(data);
+    })
+  })
+}
+//readFile("./files/file1.txt").then().catch()
+
+// function readFile(fpath)
+// {
+//   return new Promise(function(success,fail){
+//     fs.readFile(fpath,"utf-8",(err,data)=>{
+//       if(err)
+//         fail(err)
+//       else  
+//         success(data)
+//     })
+//   })
+// }
+
+readFile("./files/file1.txt") // calling manually promisified readFile()
+  .then(function(data){
+    console.log(data)
+  })
+  .catch(function(err){
+    console.log(err)
+  })
+
+fs.readFile('./files/file1.txt',"utf-8")
+  .then(function (data)
+  {
+    console.log("File read="+data);
+  })
+  .catch(function (err)
+  {
+    console.log("ERROR="+err);
+  });
+
+
+//CALLBACK
+// fs.readFile('./files/file1.txt',  function (err,data) {
+//   if (err) throw err;
+//   console.log("File read="+data);
+// });
+
+
+
+<============================   promise1.js   ===================================>
+
+//handling multiple promise calls of the same function
+var fs=require("fs");
+
+function stats (file) {
+    return new Promise((resolve, reject) => {
+      fs.stat(file, (err, data) => {
+        if (err) {
+          return reject (err)
+        }
+        resolve(data)
+      })
+    })
+  }
+  //Promise.all(['','','']).then
+  Promise.all([
+    stats('./files/file1.txt'),
+    stats('./files/file2.txt'),
+    stats('./files/file3.txt')
+  ])
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err))
